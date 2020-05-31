@@ -1,39 +1,41 @@
 import React, { Component } from 'react';
-
 import './App.css';
-
-import ValidationComponent from './ValidationComponent/ValidationComponent';
-import CharComponent from './CharComponent/CharComponent';
+import Validation from './Validation';
+import Char from './CharDisplay';
 
 class App extends Component {
   state = {
-    text: "Hello"
+    userInput: ''
   }
 
-  textHandler = (event) => {
-    this.setState({text: event.target.value});
+  inputChangedHandler = ( event ) => {
+    this.setState( { userInput: event.target.value } );
   }
 
-  deleteCharHandler = (index) => {
-    const chars = [...this.state.text.split("")];
-    chars.splice(index, 1);
-    this.setState({text: chars.join("")});
+  deleteCharHandler = ( index ) => {
+    const text = this.state.userInput.split('');
+    text.splice(index, 1);
+    const updatedText = text.join('');
+    this.setState({userInput: updatedText});
   }
 
-  render() {
+  render () {
+    const charList = this.state.userInput.split('').map((ch, index) => {
+      return <Char
+        character={ch}
+        key={index}
+        clicked={() => this.deleteCharHandler(index)} />;
+    });
+
     return (
       <div className="App">
-        <header className="App-header">
-          
-          <input type="text" onChange={this.textHandler} value={this.state.text}></input>
-          <p>{this.state.text.length} chars</p>
-          <ValidationComponent text={this.state.text} />
-          <div>
-            {this.state.text.split("").map((char, index) => {
-              return <CharComponent char={char} delete={() => this.deleteCharHandler(index)} />
-            })}
-          </div>
-        </header>
+        <input
+          type="text"
+          onChange={this.inputChangedHandler}
+          value={this.state.userInput} />
+        <p>{this.state.userInput}</p>
+        <Validation inputLength={this.state.userInput.length} />
+        {charList}
       </div>
     );
   }
